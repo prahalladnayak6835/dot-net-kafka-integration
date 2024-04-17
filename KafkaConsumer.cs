@@ -1,77 +1,59 @@
-using Confluent.Kafka;
-using Serilog;
 using System;
-using System.Threading;
+using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 
-public class KafkaConsumer : IDisposable
+public class KafkaConsumer
 {
-    private readonly ConsumerConfig config;
-    private readonly IConsumer<string, string> consumer;
-    private readonly CancellationTokenSource cancellationTokenSource;
+    private readonly ConsumerConfig _config;
+    private readonly ILogger<KafkaConsumer> _logger;
 
-    // Constructor to initialize the Kafka consumer
-    public KafkaConsumer(string bootstrapServers, string groupId, string topic)
+    // Constructor to initialize the KafkaConsumer with bootstrap servers, group id, and logger
+    public KafkaConsumer(string bootstrapServers, string groupId, ILogger<KafkaConsumer> logger)
     {
-        // Configure the consumer
-        config = new ConsumerConfig
+        // Configure the consumer with the provided bootstrap servers, group id, and auto offset reset policy
+        _config = new ConsumerConfig
         {
             BootstrapServers = bootstrapServers,
             GroupId = groupId,
-            AutoOffsetReset = AutoOffsetReset.Earliest
+            AutoOffsetReset = AutoOffsetReset.Earliest // Start consuming from the earliest offset
         };
+        _logger = logger; // Initialize the logger
+    }
 
-        // Create a Kafka consumer
-        consumer = new ConsumerBuilder<string, string>(config).Build();
+    // Method to start consuming messages from the specified topic
+    [Obsolete]
+    public void Consume(string topic)
+    {
+        // Log a message indicating that message consumption is starting
+        _logger.LogInformation($"{DateTime.Now}: Starting consuming messages");
+
+        // Create a new consumer instance
+        using var consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
+
         // Subscribe to the specified topic
         consumer.Subscribe(topic);
 
-        // Initialize a CancellationTokenSource for cancellation handling
-        cancellationTokenSource = new CancellationTokenSource();
-        var cancellationToken = cancellationTokenSource.Token;
-
-        // Handle Ctrl+C signal to gracefully stop the consumer
-        Console.CancelKeyPress += (_, e) =>
+        // Continuously consume messages from the topic
+        while (true)
         {
-            e.Cancel = true;
-            cancellationTokenSource.Cancel();
-        };
-
-        // Start a background thread to consume messages
-        ThreadPool.QueueUserWorkItem(_ =>
-        {
-            // Continuously consume messages until cancellation is requested
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                try
-                {
-                    // Consume a message from the topic
-                    var consumeResult = consumer.Consume(cancellationToken);
-                    Log.Information("Consumed message '{Message}' from topic {Topic}, partition {Partition}, offset {Offset}", consumeResult.Message.Value, consumeResult.Topic, consumeResult.Partition, consumeResult.Offset);
-                }
-                catch (OperationCanceledException)
-                {
-                    // Expected exception when cancelling the consumer
-                }
-                catch (ConsumeException e)
-                {
-                    // Handle Kafka consumer errors
-                    Log.Error("Error occurred: {ErrorReason}", e.Error.Reason);
-                }
-                catch (Exception ex)
-                {
-                    // Handle other unexpected exceptions
-                    Log.Error("Unexpected error occurred: {ErrorMessage}", ex.Message);
-                }
-            }
-        });
-    }
+                // Consume a message from the topic
+                var message = consumer.Consume();
 
-    // Method to dispose of resources when the consumer is no longer needed
-    public void Dispose()
-    {
-        // Dispose the consumer and clean up resources
-        consumer.Close();
-        consumer.Dispose();
-        cancellationTokenSource.Dispose();
+                // Log the received message
+                _logger.LogInformation($"{DateTime.Now}: Received message: {message.Value}");
+            }
+            catch (ConsumeException e)
+            {
+                // Log an error if there was an error consuming the message
+                _logger.LogError(e, $"{DateTime.Now}: Error occurred consuming message: {e.Error.Reason}");
+            }
+            catch (Exception ex)
+            {
+                // Log a general error if an exception occurred
+                _logger.LogError(ex, $"{DateTime.Now}: General error occurred: {ex.Message}");
+            }
+        }
     }
 }

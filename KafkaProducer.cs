@@ -1,47 +1,49 @@
-using Confluent.Kafka;
-using Serilog;
 using System;
-using System.Threading.Tasks;
+using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 
-public class KafkaProducer : IDisposable
+public class KafkaProducer
 {
-    private readonly ProducerConfig config;
-    private readonly IProducer<string, string> producer;
+    private readonly ProducerConfig _config;
+    private readonly ILogger<KafkaProducer> _logger;
 
-
-    // Constructor to initialize the Kafka producer
-    public KafkaProducer(string bootstrapServers)
+    // Constructor to initialize the KafkaProducer with bootstrap servers and logger
+    public KafkaProducer(string bootstrapServers, ILogger<KafkaProducer> logger)
     {
-        // Configure the producer
-        config = new ProducerConfig { BootstrapServers = bootstrapServers };
-        producer = new ProducerBuilder<string, string>(config).Build();
+        // Configure the producer with the provided bootstrap servers
+        _config = new ProducerConfig
+        {
+            BootstrapServers = bootstrapServers
+        };
+        _logger = logger; // Initialize the logger
     }
 
     // Method to produce a message to the specified topic
-    public async Task Produce(string topic, string message)
+    public void Produce(string topic, string message)
     {
-        try
-        {
-            // Produce a message to the topic
-            var result = await producer.ProduceAsync(topic, new Message<string, string> { Key = null, Value = message });
-            Log.Information("Produced message '{Message}' to topic {Topic}, partition {Partition}, offset {Offset}", message, result.Topic, result.Partition, result.Offset);
-        }
-        catch (ProduceException<string, string> e)
-        {
-            // Handle produce exceptions
-            Log.Error("Failed to produce message: {ErrorMessage} [{ErrorCode}]", e.Message, e.Error.Code);
-        }
-        catch (Exception ex)
-        {
-            // Handle other unexpected exceptions
-            Log.Error("Unexpected error occurred: {ErrorMessage}", ex.Message);
-        }
-    }
+        // Log a message indicating that a message is being produced
+        _logger.LogInformation($"{DateTime.Now}: Producing message");
 
-    // Method to dispose of resources when the producer is no longer needed
-    public void Dispose()
-    {
-        // Dispose the producer and clean up resources
-        producer.Dispose();
+        // Create a new producer instance
+        using var producer = new ProducerBuilder<Null, string>(_config).Build();
+
+        // Produce the message to the specified topic
+        producer.Produce(topic, new Message<Null, string> { Value = message },
+            (deliveryReport) =>
+            {
+                // Log if there was an error delivering the message
+                if (deliveryReport.Error.IsError)
+                {
+                    _logger.LogError($"{DateTime.Now}: Message delivery failed: {deliveryReport.Error.Reason}");
+                }
+                else
+                {
+                    // Log if the message was successfully delivered
+                    _logger.LogInformation($"{DateTime.Now}: Message delivered to {deliveryReport.Topic} message is {message}");
+                }
+            });
+
+        // Flush the producer to ensure all messages are sent before exiting
+        producer.Flush(TimeSpan.FromSeconds(5));
     }
 }

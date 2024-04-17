@@ -1,14 +1,28 @@
 {
   "version": 2,
-  "dgSpecHash": "yN/bCtE8kyvoQIixEawpU1k+xoKm54NbKKDqO9G7Q4+uvtqa0cbDxJTEe64H6aAYr1+nw8nqIOirpkeCZUEBLQ==",
+  "dgSpecHash": "LuKIwwR4crYLYrLXb9JE/UsWXmWr3ZuVuzOHLQXS9pJKHkdlpphsCD0SbfCwbQc26W1BNaA832rCJz74TjTIog==",
   "success": true,
   "projectFilePath": "C:\\Users\\praha\\Downloads\\dotnet-kafka\\KafkaIntegration\\KafkaIntegration.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\praha\\.nuget\\packages\\confluent.kafka\\2.3.0\\confluent.kafka.2.3.0.nupkg.sha512",
     "C:\\Users\\praha\\.nuget\\packages\\librdkafka.redist\\2.3.0\\librdkafka.redist.2.3.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.configuration\\8.0.0\\microsoft.extensions.configuration.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\8.0.0\\microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.configuration.binder\\8.0.0\\microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\8.0.0\\microsoft.extensions.dependencyinjection.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.logging\\8.0.0\\microsoft.extensions.logging.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.logging.configuration\\8.0.0\\microsoft.extensions.logging.configuration.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.logging.console\\8.0.0\\microsoft.extensions.logging.console.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.options\\8.0.0\\microsoft.extensions.options.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\8.0.0\\microsoft.extensions.options.configurationextensions.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\microsoft.extensions.primitives\\8.0.0\\microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "C:\\Users\\praha\\.nuget\\packages\\serilog\\3.1.1\\serilog.3.1.1.nupkg.sha512",
     "C:\\Users\\praha\\.nuget\\packages\\serilog.sinks.console\\5.0.1\\serilog.sinks.console.5.0.1.nupkg.sha512",
-    "C:\\Users\\praha\\.nuget\\packages\\system.memory\\4.5.0\\system.memory.4.5.0.nupkg.sha512"
+    "C:\\Users\\praha\\.nuget\\packages\\system.memory\\4.5.0\\system.memory.4.5.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }
