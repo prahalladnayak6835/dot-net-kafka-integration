@@ -1,12 +1,15 @@
 using Confluent.Kafka;
+using Serilog;
 using System;
 using System.Threading;
+
 public class KafkaConsumer : IDisposable
 {
     private readonly ConsumerConfig config;
     private readonly IConsumer<string, string> consumer;
     private readonly CancellationTokenSource cancellationTokenSource;
 
+    // Constructor to initialize the Kafka consumer
     public KafkaConsumer(string bootstrapServers, string groupId, string topic)
     {
         // Configure the consumer
@@ -17,9 +20,12 @@ public class KafkaConsumer : IDisposable
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
+        // Create a Kafka consumer
         consumer = new ConsumerBuilder<string, string>(config).Build();
+        // Subscribe to the specified topic
         consumer.Subscribe(topic);
 
+        // Initialize a CancellationTokenSource for cancellation handling
         cancellationTokenSource = new CancellationTokenSource();
         var cancellationToken = cancellationTokenSource.Token;
 
@@ -33,13 +39,14 @@ public class KafkaConsumer : IDisposable
         // Start a background thread to consume messages
         ThreadPool.QueueUserWorkItem(_ =>
         {
+            // Continuously consume messages until cancellation is requested
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
                     // Consume a message from the topic
                     var consumeResult = consumer.Consume(cancellationToken);
-                    Console.WriteLine($"Consumed message '{consumeResult.Message.Value}' from topic {consumeResult.Topic}, partition {consumeResult.Partition}, offset {consumeResult.Offset}");
+                    Log.Information("Consumed message '{Message}' from topic {Topic}, partition {Partition}, offset {Offset}", consumeResult.Message.Value, consumeResult.Topic, consumeResult.Partition, consumeResult.Offset);
                 }
                 catch (OperationCanceledException)
                 {
@@ -47,12 +54,19 @@ public class KafkaConsumer : IDisposable
                 }
                 catch (ConsumeException e)
                 {
-                    Console.WriteLine($"Error occurred: {e.Error.Reason}");
+                    // Handle Kafka consumer errors
+                    Log.Error("Error occurred: {ErrorReason}", e.Error.Reason);
+                }
+                catch (Exception ex)
+                {
+                    // Handle other unexpected exceptions
+                    Log.Error("Unexpected error occurred: {ErrorMessage}", ex.Message);
                 }
             }
         });
     }
 
+    // Method to dispose of resources when the consumer is no longer needed
     public void Dispose()
     {
         // Dispose the consumer and clean up resources

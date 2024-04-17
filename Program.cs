@@ -12,12 +12,14 @@ namespace KafkaIntegration
             using (var producer = new KafkaProducer(bootstrapServers))
             {
                 producer.Produce(topic, "Hello Kafka!");
-                Console.ReadLine(); // Wait for the user to press Enter
+                // Wait for the user to press Enter
+                Console.ReadLine(); 
             }
 
             using (var consumer = new KafkaConsumer(bootstrapServers, "test-consumer-group", topic))
             {
-                Console.ReadLine(); // Wait for the user to press Enter
+                // Wait for the user to press Enter
+                Console.ReadLine(); 
             }
         }
     }
