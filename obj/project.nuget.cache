@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "UDx/oJbYUw+Pp53L13Krb7Sl2CSK3J9JINvsoMffOAkmQwYQHEZTegG0Pnplp3bJDgDv2w7O3RjaWrvCDGYB9A==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\praha\\Downloads\\dotnet-kafka\\KafkaIntegration\\KafkaIntegration.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\praha\\.nuget\\packages\\confluent.kafka\\2.3.0\\confluent.kafka.2.3.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\librdkafka.redist\\2.3.0\\librdkafka.redist.2.3.0.nupkg.sha512",
+    "C:\\Users\\praha\\.nuget\\packages\\system.memory\\4.5.0\\system.memory.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}
